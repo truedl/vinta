@@ -3,7 +3,7 @@ Vinta programming language [ Language in the early stages of its construction! ]
 
 # Some Information
 Vinta files ends with <b>.vta</b><br/>
-Main example: https://github.com/truedl/vinta/blob/master/examples/code.vta
+Main example: https://github.com/truedl/vinta/blob/master/examples/code.vta<br/>
 Uncompiled File: https://github.com/truedl/vinta/blob/master/uncompiled/vinta.cpp
 
 # I need your help
