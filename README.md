@@ -1,4 +1,4 @@
-# vinta
+# Vinta
 Vinta programming language [ Language in the early stages of its construction! ]
 
 # I need your help
@@ -25,6 +25,7 @@ Vinta programming language [ Language in the early stages of its construction! ]
 # Commands
 <h3>ins</h3>
 <i>Struct</i>
+
 ```
 ins Text
 ```
@@ -34,6 +35,7 @@ Output Text
 
 <h3>set</h3>
 <i>Struct</i>
+
 ```
 set name = value
 ```
@@ -43,6 +45,7 @@ Set Variable by name and value
 
 <h3>varcheck</h3>
 <i>Struct</i>
+
 ```
 varcheck name
 ```
