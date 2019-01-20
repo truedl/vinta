@@ -1,0 +1,18 @@
+// One Line Comment
+/*
+Multi Line Comment
+*/
+
+set x = "Example String"
+set y = 10
+set z = 3.33
+set xyz = "Example Number Two"
+
+ins "Hello, World!"
+ins "[" .x. "] << x variable value, [" .xyz. "]<< xyz variable value"
+
+varcheck x
+varcheck y
+varcheck z
+
+pause Paused...
