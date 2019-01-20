@@ -18,6 +18,7 @@ void rerr(string err, string additional=""){
     } else {
         cout << "[ERROR] (" << additional << ") " << err << endl;
     }
+    getch();
     exit(1);
 }
 
@@ -57,11 +58,13 @@ vector<string> split(string text, string bychar, string m=""){
 }
 
 void cmpLine(string line){
-    string a;
+    bool fstT, secT;
+    string a, lt, le, c;
     string b = "";
     int q;
     if(line.substr(0, 2) == "*/"){
         inComment = false;
+        return;
     }
     if(line.substr(0, 2) == "/*"){
         inComment = true;
@@ -80,7 +83,78 @@ void cmpLine(string line){
         }
     }
     if(command == "ins"){
-        cout << join(ot) << endl;
+        fstT = false;
+        secT = false;
+        lt = "";
+        le = "";
+        c = "";
+        for(int i = 0; i < ot.size(); i++){
+            if(secT){
+                if(ot[i].substr(0, 1) == "."){
+                    if(ot[i].back() != '.'){
+                        if(mem.find(ot[i].substr(1)) != mem.end()){
+                            if(mem[ot[i].substr(1)] == "s"){
+                                lt += "\"" + memS[ot[i].substr(1)] + "\"";
+                            } else if(mem[ot[i].substr(1)] == "f"){
+                                lt += "\"" + to_string(memF[ot[i].substr(1)]) + "\"";
+                            } else if(mem[ot[i].substr(1)] == "i"){
+                                lt += "\"" + to_string(memI[ot[i].substr(1)]) + "\"";
+                            }
+                        }
+                    } else {
+                        if(mem.find(ot[i].substr(1, ot[i].size()-2)) != mem.end()){
+                            if(mem[ot[i].substr(1, ot[i].size()-2)] == "s"){
+                                lt += "\"" + memS[ot[i].substr(1, ot[i].size()-2)] + "\"";
+                            } else if(mem[ot[i].substr(1, ot[i].size()-2)] == "f"){
+                                lt += "\"" + to_string(memF[ot[i].substr(1, ot[i].size()-2)]) + "\"";
+                            } else if(mem[ot[i].substr(1, ot[i].size()-2)] == "i"){
+                                lt += "\"" + to_string(memI[ot[i].substr(1, ot[i].size()-2)]) + "\"";
+                            }
+                        }
+                        fstT = false;
+                        secT = false;
+                    }
+                }
+            } else {
+                if(ot[i].substr(0, 1) == "\"" && ot[i].substr(ot[i].size()-1, ot[i].size()) == "\"" || ot[i].substr(0, 1) == "'" && ot[i].substr(ot[i].size()-1, ot[i].size()) == "'"){
+                    if(i+1 != ot.size()){
+                        lt += ot[i];
+                        fstT = true;
+                        secT = true;
+                    } else {
+                        lt += ot[i];
+                    }
+                } else if(ot[i].substr(0, 1) == "\""){
+                    fstT = true;
+                    lt += ot[i];
+                } else if(ot[i].back() == '\"' && fstT){
+                    secT = true;
+                    lt += " " + ot[i];
+                } else if(fstT){
+                    lt += " " + ot[i];
+                }
+            }
+        }
+
+        fstT = false;
+        secT = false;
+        for(int i = 0; i < lt.size(); i++){
+            if(lt[i] == '\"'){
+                if(fstT){
+                    fstT = false;
+                    le += c;
+                    c = "";
+                } else {
+                    fstT = true;
+                }
+            } else {
+                if(fstT){
+                    c += lt[i];
+                }
+            }
+        }
+
+        cout << le << endl;
     } else if(command == "set"){
         q = 0;
         for(int i = 0; i < ot.size(); i++){
@@ -93,9 +167,9 @@ void cmpLine(string line){
                 } else if(q == 2){
                     if(i+1 != ot.size()){
                         if(b != ""){
-                            b += ot[i];
-                        } else {
                             b += " " + ot[i];
+                        } else {
+                            b += ot[i];
                         }
                     } else {
                         if(b == ""){
@@ -136,6 +210,10 @@ void cmpLine(string line){
     } else if(command == "pause"){
         cout << join(ot);
         getch();
+    } else {
+        if(command != ""){
+            rerr("Command not found", command);
+        }
     }
 }
 
