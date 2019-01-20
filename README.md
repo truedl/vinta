@@ -27,7 +27,7 @@ Vinta programming language [ Language in the early stages of its construction! ]
 <i>Struct</i>
 
 ```
-ins Text
+ins "Text"
 ```
 
 <i>Description</i><br/>
