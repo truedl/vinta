@@ -30,7 +30,7 @@ Vinta programming language [ Language in the early stages of its construction! ]
 ins Text
 ```
 
-<i>Description</i>
+<i>Description</i><br/>
 Output Text
 
 <h3>set</h3>
@@ -40,7 +40,7 @@ Output Text
 set name = value
 ```
 
-<i>Description</i>
+<i>Description</i><br/>
 Set Variable by name and value
 
 <h3>varcheck</h3>
@@ -50,5 +50,5 @@ Set Variable by name and value
 varcheck name
 ```
 
-<i>Description</i>
+<i>Description</i><br/>
 Check variable information
