@@ -1,6 +1,11 @@
 # Vinta
 Vinta programming language [ Language in the early stages of its construction! ]
 
+# Some Information
+Vinta files ends with <b>.vta</b><br/>
+Main example: https://github.com/truedl/vinta/blob/master/examples/code.vta
+Uncompiled File: https://github.com/truedl/vinta/blob/master/uncompiled/vinta.cpp
+
 # I need your help
 <b>Hello guys, I need some help with this language, If you find problems please post it at issues! Thanks!</b>
 
