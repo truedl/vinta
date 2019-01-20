@@ -15,7 +15,7 @@ Vinta programming language [ Language in the early stages of its construction! ]
 - [ ] Dict Varaible Type
 - [ ] For Loop
 - [ ] While Loop
-- [ ] If, If else, Else...
+- [ ] If, Else If, Else...
 - [ ] Modules
 - [ ] Functions
 - [ ] Functions Arguments
