@@ -1,18 +1,14 @@
-// One Line Comment
 /*
-Multi Line Comment
+Example File
 */
 
-set x = "Example String"
-set y = 10
-set z = 3.33
-set xyz = "Example Number Two"
+// Variables
+set x = 10
+set y = 3.33
+set z = "String Variable"
 
-ins "Hello, World!"
-ins "[" .x. "] << x variable value, [" .xyz. "]<< xyz variable value"
+// Insert
+ins "Hello, World! ".z
 
-varcheck x
-varcheck y
-varcheck z
-
-pause Paused...
+// Pause
+pause "Paused..."
