@@ -13,6 +13,7 @@ Uncompiled File: https://github.com/truedl/vinta/blob/master/uncompiled/vinta.cp
 - [x] String Variable Type
 - [x] Integer Variable Type
 - [x] Float Variable Type
+- [x] Boolean Variable Type
 - [ ] Array Variable Type
 - [ ] Dict Varaible Type
 - [ ] For Loop
@@ -45,12 +46,12 @@ set name = value
 <i>Description</i><br/>
 Set Variable by name and value
 
-<h3>varcheck</h3>
+<h3>pause</h3>
 <i>Struct</i>
 
 ```
-varcheck name
+pause "Text"
 ```
 
 <i>Description</i><br/>
-Check variable information
+Pause program with or without text
