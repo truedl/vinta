@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <conio.h>
-#include <algorithm>
 #include <vector>
+#include <regex>
 #include <map>
 using namespace std;
 
@@ -18,7 +18,6 @@ void rerr(string err, string additional=""){
     } else {
         cout << "[ERROR] (" << additional << ") " << err << endl;
     }
-    getch();
     exit(1);
 }
 
@@ -59,8 +58,9 @@ vector<string> split(string text, string bychar, string m=""){
 
 void cmpLine(string line){
     bool fstT, secT;
-    string a, lt, le, c;
+    string a, lt, le;
     string b = "";
+    vector<string> c;
     int q;
     if(line.substr(0, 2) == "*/"){
         inComment = false;
@@ -87,7 +87,6 @@ void cmpLine(string line){
         secT = false;
         lt = "";
         le = "";
-        c = "";
         for(int i = 0; i < ot.size(); i++){
             if(secT){
                 if(ot[i].substr(0, 1) == "."){
@@ -116,7 +115,7 @@ void cmpLine(string line){
                     }
                 }
             } else {
-                if(ot[i].substr(0, 1) == "\"" && ot[i].substr(ot[i].size()-1, ot[i].size()) == "\"" || ot[i].substr(0, 1) == "'" && ot[i].substr(ot[i].size()-1, ot[i].size()) == "'"){
+                if(ot[i].substr(0, 1) == "\"" && ot[i].back() == '"' || ot[i].substr(0, 1) == "'" && ot[i].back() == '\''){
                     if(i+1 != ot.size()){
                         lt += ot[i];
                         fstT = true;
@@ -127,7 +126,7 @@ void cmpLine(string line){
                 } else if(ot[i].substr(0, 1) == "\""){
                     fstT = true;
                     lt += ot[i];
-                } else if(ot[i].back() == '\"' && fstT){
+                } else if(ot[i].back() == '"' && fstT){
                     secT = true;
                     lt += " " + ot[i];
                 } else if(fstT){
@@ -136,20 +135,13 @@ void cmpLine(string line){
             }
         }
 
-        fstT = false;
-        secT = false;
-        for(int i = 0; i < lt.size(); i++){
-            if(lt[i] == '\"'){
-                if(fstT){
-                    fstT = false;
-                    le += c;
-                    c = "";
+        c = split(lt, "\"");
+        for(int i = 0; i < c.size(); i++){
+            if(c[i] != ""){
+                if(le != ""){
+                    le += c[i];
                 } else {
-                    fstT = true;
-                }
-            } else {
-                if(fstT){
-                    c += lt[i];
+                    le = c[i];
                 }
             }
         }
@@ -180,7 +172,7 @@ void cmpLine(string line){
                         if(b.substr(0, 1) == " "){
                             b = b.substr(1, b.size());
                         }
-                        if(b.substr(0, 1) == "\"" && b.substr(b.size()-1, b.size()) == "\"" || b.substr(0, 1) == "'" && b.substr(b.size()-1, b.size()) == "'"){
+                        if(b.substr(0, 1) == "\"" && b.back() == '"' || b.substr(0, 1) == "'" && b.back() == '\''){
                             memS[a] = b.substr(1, b.size()-2);
                             mem[a] = "s";
                         } else if(b.find(".") != string::npos){
