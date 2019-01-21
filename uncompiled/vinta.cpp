@@ -1,16 +1,16 @@
 #include <iostream>
-#include <fstream>
 #include <conio.h>
+#include <fstream>
 #include <vector>
-#include <regex>
+#include <string>
 #include <map>
 using namespace std;
 
+map<string, char> mem;
 map<string, string> memS;
 map<string, int> memI;
 map<string, float> memF;
-map<string, string> mem;
-bool inComment = false;
+bool isComment = false;
 
 void rerr(string err, string additional=""){
     if(additional == ""){
@@ -36,18 +36,14 @@ string join(vector<string> list, string delim=" ", string m=""){
     }
 }
 
-string between(string text, string f, string s){
-    return text.substr(text.find(f), text.find(s));
-}
-
-vector<string> split(string text, string bychar, string m=""){
+vector<string> split(string text, char bychar, string m=""){
     vector<string> lst;
-    for(int i = 0; i < text.length(); i++){
-        if(string(1, text.at(i)) == bychar){
+    for(int i = 0; i < text.size(); i++){
+        if(text[i] == bychar){
             lst.push_back(m);
             m = "";
         } else {
-            m += string(1, text.at(i));
+            m += text[i];
         }
     }
     if(m != ""){
@@ -56,171 +52,146 @@ vector<string> split(string text, string bychar, string m=""){
     return lst;
 }
 
-void cmpLine(string line){
-    bool fstT, secT;
-    string a, lt, le;
-    string b = "";
-    vector<string> c;
-    int q;
-    if(line.substr(0, 2) == "*/"){
-        inComment = false;
-        return;
-    }
-    if(line.substr(0, 2) == "/*"){
-        inComment = true;
-    }
-    if(line.substr(0, 2) == "//" || inComment){
-        return;
-    }
-    vector<string> list, ot, lmt;
-    string command;
-    list = split(line, " ");
-    for(int i = 0; i < list.size(); i++){
-        if(i == 0){
-            command = list[0];
+vector<string> splitSkipS(string text, char bychar, bool isStr = false, string m=""){
+    vector<string> lst;
+    for(int i = 0; i < text.size(); i++){
+        if(!isStr){
+            if(text[i] == bychar){
+                lst.push_back(m);
+                m = "";
+            } else if(text[i] == '"'){
+                if(text[i-1] != '\\'){
+                    isStr = true;
+                }
+                m += text[i];
+            } else {
+                m += text[i];
+            }
         } else {
-            ot.push_back(list[i]);
+            if(text[i] == '"'){
+                if(text[i-1] != '\\'){
+                    isStr = false;
+                }
+                m += text[i];
+            } else {
+                m += text[i];
+            }
         }
     }
-    if(command == "ins"){
-        fstT = false;
-        secT = false;
-        lt = "";
-        le = "";
-        for(int i = 0; i < ot.size(); i++){
-            if(secT){
-                if(ot[i].substr(0, 1) == "."){
-                    if(ot[i].back() != '.'){
-                        if(mem.find(ot[i].substr(1)) != mem.end()){
-                            if(mem[ot[i].substr(1)] == "s"){
-                                lt += "\"" + memS[ot[i].substr(1)] + "\"";
-                            } else if(mem[ot[i].substr(1)] == "f"){
-                                lt += "\"" + to_string(memF[ot[i].substr(1)]) + "\"";
-                            } else if(mem[ot[i].substr(1)] == "i"){
-                                lt += "\"" + to_string(memI[ot[i].substr(1)]) + "\"";
-                            }
-                        }
-                    } else {
-                        if(mem.find(ot[i].substr(1, ot[i].size()-2)) != mem.end()){
-                            if(mem[ot[i].substr(1, ot[i].size()-2)] == "s"){
-                                lt += "\"" + memS[ot[i].substr(1, ot[i].size()-2)] + "\"";
-                            } else if(mem[ot[i].substr(1, ot[i].size()-2)] == "f"){
-                                lt += "\"" + to_string(memF[ot[i].substr(1, ot[i].size()-2)]) + "\"";
-                            } else if(mem[ot[i].substr(1, ot[i].size()-2)] == "i"){
-                                lt += "\"" + to_string(memI[ot[i].substr(1, ot[i].size()-2)]) + "\"";
-                            }
-                        }
-                        fstT = false;
-                        secT = false;
-                    }
+    if(m != ""){
+        lst.push_back(m);
+    }
+    return lst;
+}
+
+vector<string> fsplit(string text, char bychar, string m="", string mm="", bool skp = false){
+    vector<string> lst;
+    for(int i = 0; i < text.size(); i++){
+        if(!skp){
+            if(text[i] == bychar){
+                skp = true;
+            } else {
+                m += text[i];
+            }
+        } else {
+            mm += text[i];
+        }
+    }
+    lst.push_back(m);
+    lst.push_back(mm);
+    return lst;
+}
+
+string wsf(string line, bool inStr = false, string rt=""){
+    for(int i = 0; i < line.size(); i++){
+        if(line[i] == '"'){
+            rt += line[i];
+            if(inStr){
+                if(line[i-1] != '\\'){
+                    inStr = false;
                 }
             } else {
-                if(ot[i].substr(0, 1) == "\"" && ot[i].back() == '"' || ot[i].substr(0, 1) == "'" && ot[i].back() == '\''){
-                    if(i+1 != ot.size()){
-                        lt += ot[i];
-                        fstT = true;
-                        secT = true;
-                    } else {
-                        lt += ot[i];
-                    }
-                } else if(ot[i].substr(0, 1) == "\""){
-                    fstT = true;
-                    lt += ot[i];
-                } else if(ot[i].back() == '"' && fstT){
-                    secT = true;
-                    lt += " " + ot[i];
-                } else if(fstT){
-                    lt += " " + ot[i];
-                }
+                inStr = true;
             }
+        } else if(line[i] != ' ' || inStr){
+            rt += line[i];
         }
+    }
 
-        c = split(lt, "\"");
-        for(int i = 0; i < c.size(); i++){
-            if(c[i] != ""){
-                if(le != ""){
-                    le += c[i];
-                } else {
-                    le = c[i];
-                }
-            }
-        }
+    return rt;
+}
 
-        cout << le << endl;
-    } else if(command == "set"){
-        q = 0;
-        for(int i = 0; i < ot.size(); i++){
-            if(ot[i] != " "){
-                if(q == 0){
-                    a = ot[i];
-                    q++;
-                } else if(q == 1 && ot[i] == "="){
-                    q++;
-                } else if(q == 2){
-                    if(i+1 != ot.size()){
-                        if(b != ""){
-                            b += " " + ot[i];
-                        } else {
-                            b += ot[i];
-                        }
-                    } else {
-                        if(b == ""){
-                            b = ot[i];
-                        } else {
-                            b += " " + ot[i];
-                        }
-                        if(b.substr(0, 1) == " "){
-                            b = b.substr(1, b.size());
-                        }
-                        if(b.substr(0, 1) == "\"" && b.back() == '"' || b.substr(0, 1) == "'" && b.back() == '\''){
-                            memS[a] = b.substr(1, b.size()-2);
-                            mem[a] = "s";
-                        } else if(b.find(".") != string::npos){
-                            memF[a] = stof(b);
-                            mem[a] = "f";
-                        } else {
-                            memI[a] = stoi(b);
-                            mem[a] = "i";
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    } else if(command == "varcheck"){
-        if(mem.find(ot[0]) != mem.end()){
-            if(mem[ot[0]] == "s"){
-                cout << "[VAR " << ot[0] << "] " << memS[ot[0]] << " (STRING)" << endl;
-            } else if(mem[ot[0]] == "f"){
-                cout << "[VAR " << ot[0] << "] " << memF[ot[0]] << " (FLOAT)" << endl;
-            } else if(mem[ot[0]] == "i"){
-                cout << "[VAR " << ot[0] << "] " << memI[ot[0]] << " (INT)" << endl;
-            }
+string stvp(string text, string b=""){
+    vector<string> v = splitSkipS(text, '.');
+    for(int i = 0; i < v.size(); i++){
+        if(v[i].at(0) == '"' && v[i].back() == '"'){
+            b += v[i].substr(1, v[i].size()-2);
         } else {
-            rerr("Variable not found!", "varcheck");
+            if(mem.find(v[i]) != mem.end()){
+                if(mem[v[i]] == 's'){
+                    b += memS[v[i]];
+                } else if(mem[v[i]] == 'f'){
+                    b += to_string(memF[v[i]]);
+                } else if(mem[v[i]] == 'i'){
+                    b += to_string(memI[v[i]]);
+                }
+            } else {
+                rerr("Variable not found", v[i]);
+            }
         }
-    } else if(command == "pause"){
-        cout << join(ot);
+    }
+    return b;
+}
+
+void cmpline(string text){
+    vector<string> v;
+    string b;
+    if(text == ""){
+        return;
+    }
+    vector<string> vec = fsplit(text, ' ');
+    vec[1] = wsf(vec[1]);
+    if(vec[0] == "ins"){
+        cout << stvp(vec[1]) << endl;
+    } else if(vec[0] == "set"){
+        v = split(vec[1], '=');
+        if(v[1].at(0) == '"' && v[1].back() == '"'){
+            mem[v[0]] = 's';
+            memS[v[0]] = stvp(v[1]);
+        } else if(v[0].find('.') != string::npos){
+            mem[v[0]] = 'f';
+            memF[v[0]] = stof(v[1]);
+        } else {
+            mem[v[0]] = 'i';
+            memI[v[0]] = stoi(v[1]);
+        }
+    } else if(vec[0] == "pause"){
+        cout << stvp(vec[1]);
         getch();
     } else {
-        if(command != ""){
-            rerr("Command not found", command);
-        }
+        rerr("Unknowen command", vec[0]);
     }
 }
 
 int main(int argc, char* argv[]){
+    ifstream fc;
     string l;
     if(argc <= 1){
-        rerr("Not Enough Arguments Provided");
+        rerr("Not enough arguments provided");
     }
-    ifstream fc;
     fc.open(argv[1]);
     if(!fc){
-        rerr("Unable to open file", argv[1]);
-    } else {
-        while(getline(fc, l)){
-            cmpLine(l);
+        rerr("Could not open the file", argv[1]);
+    }
+    while(getline(fc, l)){
+        if(l.substr(0, 2) == "/*"){
+            isComment = true;
+        }
+        if(l.substr(0, 2) != "//" && !isComment){
+            cmpline(l);
+        }
+        if(l.substr(0, 2) == "*/"){
+            isComment = false;
         }
     }
     return 0;
