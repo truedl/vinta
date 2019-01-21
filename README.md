@@ -13,7 +13,7 @@ Uncompiled File: https://github.com/truedl/vinta/blob/master/uncompiled/vinta.cp
 - [x] String Variable Type
 - [x] Integer Variable Type
 - [x] Float Variable Type
-- [x] Boolean Variable Type
+- [ ] Boolean Variable Type
 - [ ] Array Variable Type
 - [ ] Dict Varaible Type
 - [ ] For Loop
