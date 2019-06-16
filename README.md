@@ -1,5 +1,5 @@
 # Vinta
-Vinta programming language [ in development ]
+Vinta - Just an interpreter
 
 # Some Information
 Vinta files ends with <b>.vta</b><br/>
